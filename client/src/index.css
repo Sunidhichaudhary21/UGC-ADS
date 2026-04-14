@@ -7,7 +7,7 @@
 
 @layer base {
     body {
-        @apply bg-[#3F536A] text-white antialiased;
+        @apply bg-dark-bg text-white antialiased;
     }
 
     button {
@@ -49,16 +49,16 @@
 }
 
 @theme {
-    --color-primary: #3F536A;
-    --color-primary-hover: #3F536A;
-    --color-secondary: white;
-    --color-dark-bg: #3F536A;
-    --color-dark-card: #3F536A;
+    --color-primary: #2563EB;
+    --color-primary-hover: #1D4ED8;
+    --color-secondary: #E0E7FF;
+    --color-dark-bg: #050B1A;
+    --color-dark-card: #0B1530;
 }
 
 @layer utilities {
     .glass-panel {
-        @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
+        @apply bg-blue-500/10 backdrop-blur-lg border border-blue-300/20 shadow-xl;
     }
 
     .btn-secondary {

@@ -134,15 +134,15 @@ export default function Hero() {
                             viewport={{ once: true }}
                             transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1, delay: 0.5 }}
                         >
-                            <motion.div className="rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-linear-to-b from-[#3F536A]/70 to-transparent">
-                                <div className="relative aspect-16/10 bg-[#3F536A]">
+                            <motion.div className="rounded-3xl overflow-hidden border border-blue-200/20 shadow-2xl shadow-blue-500/20 bg-linear-to-b from-primary/70 to-transparent">
+                                <div className="relative aspect-16/10 bg-dark-card">
                                     <img
                                         src={mainImageUrl}
                                         alt="agency-work-preview"
                                         className="w-full h-full object-cover object-center"
                                     />
 
-                                    <div className="absolute left-4 top-4 px-3 py-1 rounded-full bg-[#3F536A]/80 backdrop-blur-sm text-xs">
+                                    <div className="absolute left-4 top-4 px-3 py-1 rounded-full bg-primary/80 backdrop-blur-sm text-xs">
                                         Social-Ready
                                     </div>
 

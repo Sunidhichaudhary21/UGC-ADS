@@ -7,7 +7,7 @@ const UploadZone = ({label,file,onClear ,onChange}:
     <div className="relative group">
         <div className={`relative h-64 rounded-2x1 border-2
             border-dashed tranityion-all duration-300 flex flex-col
-            items-center justify-center bg-white/2 p-6 ${file ? 'border-violet-600/50 bg-violet -500' : 'border-white/10 hover:border-violet-500/30 hover:bg-white/5'}`}>
+          items-center justify-center bg-white/2 p-6 ${file ? 'border-blue-600/50 bg-blue-900/20' : 'border-white/10 hover:border-blue-500/40 hover:bg-white/5'}`}>
               {file ? (
                 <>
                 <img src={"URL.createObjectURL(file"} alt="preview"
@@ -29,11 +29,11 @@ const UploadZone = ({label,file,onClear ,onChange}:
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center
                 justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <UploadIcon className="w-8 h-8 text-gray-400
-                  group-hover:text-violet-400 transition-colors"/>
+                  group-hover:text-blue-300 transition-colors"/>
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{label}</h3>
                 <p className="text-sm text-gray-400 text-center max-w-[200px]">Drag & drop or Click to upload</p>
-                <input type="file" accept="image/*" onChange={onChange}
+                <input type="file" accept="image/*" onChange={onChange} aria-label={`${label} upload`}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
                 </>
               )}

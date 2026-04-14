@@ -36,7 +36,7 @@ export default function Navbar() {
       viewport={{ once: true }}
       transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
     >
-      <div className="max-w-6xl mx-auto flex items-center justify-between bg-[#3F536A]/90 backdrop-blur-md border border-white/15 rounded-2xl p-3">
+      <div className="max-w-6xl mx-auto flex items-center justify-between bg-primary/90 backdrop-blur-md border border-blue-200/20 rounded-2xl p-3 shadow-[0_0_40px_rgba(37,99,235,0.2)]">
         <Link to="/" onClick={() => scrollTo(0, 0)}>
           <img src={assets.logo} alt="logo" className="h-8" />
         </Link>
@@ -122,7 +122,7 @@ export default function Navbar() {
         )}
       </div>
       <div
-        className={`flex flex-col items-center justify-center gap-6 text-lg font-medium fixed inset-0 bg-[#3F536A]/95 backdrop-blur-md z-50 transition-all duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`flex flex-col items-center justify-center gap-6 text-lg font-medium fixed inset-0 bg-dark-bg/95 backdrop-blur-md z-50 transition-all duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {navLinks.map((link) => (
           <a key={link.name} href={link.href} onClick={() => setIsOpen(false)}>
@@ -142,7 +142,7 @@ export default function Navbar() {
 
         <button
           onClick={() => setIsOpen(false)}
-          className="rounded-md bg-white p-2 text-[#3F536A] ring-white active:ring-2"
+          className="rounded-md bg-blue-100 p-2 text-blue-900 ring-blue-200 active:ring-2"
         >
           <XIcon />
         </button>

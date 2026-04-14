@@ -74,7 +74,7 @@ const Genetator = () => {
                 placeholder="Name your project"
                 required
                 className="w-full bg-white/3 rounded-lg border-2 p-4 
-                    text-sm border-violet-200/10 focus:border-violet-500/50 outline-none transition-all"
+                    text-sm border-blue-200/20 focus:border-blue-500/60 outline-none transition-all"
               />
             </div>
             <div className="mb-4 text-gray-300">
@@ -89,7 +89,7 @@ const Genetator = () => {
                 placeholder="Enter the name of product"
                 required
                 className="w-full bg-white/3 rounded-lg border-2 p-4
-                text-sm border-violet-200/10 focus:border-violet-500/50 outline-none transition-all"
+                text-sm border-blue-200/20 focus:border-blue-500/60 outline-none transition-all"
               />
             </div>
             <div className="mb-4 text-gray-300">
@@ -98,7 +98,7 @@ const Genetator = () => {
                 className="block text-sm mb-4"
               >
                 Product Description{" "}
-                <span className="text-xs text-violet-400">(optional)</span>
+                <span className="text-xs text-blue-300">(optional)</span>
               </label>
 
               <textarea
@@ -108,7 +108,7 @@ const Genetator = () => {
                 onChange={(e) => setProductDescription(e.target.value)}
                 placeholder="Enter the description of the product"
                 className="w-full bg-white/3 rounded-lg border-2 p-4 text-sm
-                 border-violet-200/10 focus:border-violet-500/50 outline-none resize-none transition-all"
+                 border-blue-200/20 focus:border-blue-500/60 outline-none resize-none transition-all"
               />
             </div>
 
@@ -118,13 +118,13 @@ const Genetator = () => {
                 <RectangleVerticalIcon
                   onClick={() => setAspectRatio("9:16")}
                   className={`p-2.5 size-13 bg-white/6 rounded transition-all ring-2
-                  ring-transparent cursor-pointer ${aspectRatio === "9:16" ? "ring-violet-500/50 bg-white/10" : ""}`}
+                  ring-transparent cursor-pointer ${aspectRatio === "9:16" ? "ring-blue-500/60 bg-white/10" : ""}`}
                 />
                 
                 <RectangleHorizontalIcon
                   onClick={() => setAspectRatio("16:9")}
                   className={`p-2.5 size-13 bg-white/6 rounded transition-all ring-2
-                  ring-transparent cursor-pointer ${aspectRatio === "16:9" ? "ring-violet-500/50 bg-white/10" : ""}`}
+                  ring-transparent cursor-pointer ${aspectRatio === "16:9" ? "ring-blue-500/60 bg-white/10" : ""}`}
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ const Genetator = () => {
                 className="block text-sm mb-4"
               >
                 User Prompt
-                <span className="text-xs text-violet-400">(optional)</span>
+                <span className="text-xs text-blue-300">(optional)</span>
               </label>
               <textarea
                 id="userPrompt"
@@ -144,7 +144,7 @@ const Genetator = () => {
                 onChange={(e) => setUserPrompt(e.target.value)}
                 placeholder="Describe how you want the naration to be."
                 className="w-full bg-white/3 rounded-lg border-2 p-4 text-sm
-              border-violet-200/10 focus:border-violet-500/50 outline-none resize-none transition-all"
+              border-blue-200/20 focus:border-blue-500/60 outline-none resize-none transition-all"
               />
             </div>
           </div>

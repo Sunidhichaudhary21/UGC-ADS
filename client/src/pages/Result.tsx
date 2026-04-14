@@ -34,7 +34,7 @@ const handleGenerateVideo=async()=>{
 
   return loading ? (
     <div className="h-screen w-full flex items-center justify-center">
-      <Loader2Icon className="animate-spin text-indigo- size-9" />
+      <Loader2Icon className="animate-spin text-blue-300 size-9" />
     </div>
   ) : (
     <div className="min-h-screen text-white p-6 md:p-12 mt-20">
@@ -128,8 +128,8 @@ const handleGenerateVideo=async()=>{
                   
                   </PrimaryButton>
               ):(
-                <div className="p-3 bg-blue-500/10 border-green-500/20
-                rounded-xl text-black-400 text-center text-sm font-medium">
+                <div className="p-3 bg-blue-700/20 border-blue-300/35
+                rounded-xl text-blue-200 text-center text-sm font-medium border">
                   Video Generated Successfully!
                 </div>
               )}
