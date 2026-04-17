@@ -1,10 +1,10 @@
 
 import { PricingTable } from '@clerk/react';
 import Title from './Title';
-import { color } from 'framer-motion';
+
 
 export default function Pricing() {
-    
+
     return (
         <section id="pricing" className="py-20 bg-white/10 border-t border-white/20">
             <div className="max-w-6xl mx-auto px-4">
@@ -18,17 +18,17 @@ export default function Pricing() {
 
                 <div className="flex flex-wrap items-center justify-center max-w-5xl mx-auto">
                     <PricingTable appearance={{
-                        variables:{
+                        variables: {
                             colorBackgroud: 'none'
                         },
-                        elements:{
-                            pricingTableCardBody :'bg-white/6' ,
-                            pricingTableCardHeader :'bg-white/10' ,
-                            switchThumb :'bg-white'
+                        elements: {
+                            pricingTableCardBody: 'bg-white/6',
+                            pricingTableCardHeader: 'bg-white/10',
+                            switchThumb: 'bg-white'
                         }
-                    }}/>
-                    
-                  
+                    }} />
+
+
                 </div>
             </div>
         </section>
