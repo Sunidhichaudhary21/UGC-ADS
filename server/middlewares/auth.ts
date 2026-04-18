@@ -7,7 +7,9 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
             return res.status(401).json({ message: "Unauthorized" })
         }
         next();
-    } catch (error) {
+    } catch (error: any) {
+        res.status(401).json({message:error.code||error.message})
+
 
     }
 
