@@ -29,7 +29,7 @@ export const getAllProjects=async(req:Request , res:Response)=>{
 
 // get project by id
 
-export const getProjectBtId=async(req:Request , res:Response)=>{
+export const getProjectById=async(req:Request , res:Response)=>{
     try{
 
 
