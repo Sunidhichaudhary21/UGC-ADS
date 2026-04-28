@@ -7,20 +7,63 @@ datasource db {
   provider = "postgresql"
 }
 
-model User { 
-  id      String  @id 
-  email   String  @unique
-  name    String?
-  image   String?
-  credits Int     @default(0)
-  posts   Post[]
-} 
+model User {
+  id        String   @id
+  email     String
+  name      String
+  image     String
+  credits   Int      @default(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-model Post { 
-  id        Int     @id @default(autoincrement()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  author    User    @relation(fields: [authorId], references: [id]) 
-  authorId  String
-} 
+
+
+  projects     Project[]
+}
+
+
+model Project {
+  id                 String   @id @default(uuid())
+  name               String
+  userId             String
+  productName        String   
+  productDescription String   @default("")
+  userPrompt         String   @default("")
+  aspectRatio        String   @default("9:16")
+  targetLength       Int      @default(5)
+  uploadedImages     String[]
+  generatedImage     String   @default("")
+  generatedVideo     String   @default("")
+  isGenerating       Boolean  @default(false)
+  isPublished        Boolean  @default(false)
+  error              String   @default("")
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+
+user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+}
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
