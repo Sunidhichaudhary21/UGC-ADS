@@ -1,6 +1,11 @@
 import {Request, Response} from 'express'
 import *as Sentry from "@sentry/node"
 export const createProject= async(req:Request ,res:Response)=>{
+    let tempProjectId: string;
+    const {userId} =req.auth();
+    let isCreditDeducted =false;
+
+    const{} =req.body;
     try{
 
     }catch(error:any){
