@@ -37,7 +37,22 @@ export const createProject= async(req:Request ,res:Response)=>{
                     return result.secure_url
             })
         )
-        const project =await prisma.
+        const project =await prisma.project.create({
+            data:{
+                name,
+                userId,
+                productName,
+                productDescription,
+                userPrompt,
+                aspectRatio,
+                targetLength:parseInt(targetLength),
+                uploadImages,
+                isGenerating:true
+
+            }
+        })
+        tempProjectId=project.id;
+
 
 
     }catch(error:any){
