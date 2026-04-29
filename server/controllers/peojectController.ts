@@ -1,11 +1,31 @@
 import {Request, Response} from 'express'
 import *as Sentry from "@sentry/node"
+import { prisma } from '../configs/prisma.js';
 export const createProject= async(req:Request ,res:Response)=>{
     let tempProjectId: string;
     const {userId} =req.auth();
     let isCreditDeducted =false;
 
-    const{} =req.body;
+    const{name ='New Project' , aspectRatio, userPrompt , productName , productDescription, targetLength=5} =req.body;
+
+    const images:any =req.files;
+
+    if(images.length<2 || !productName){
+        return res.status(400).json({message:'please upload atleast 2 images'})
+    }
+
+    const user =await prisma.user.findUnique({
+        where: {id:userId}
+    })
+
+    if(!user || user.credits<5){
+        return res.status(401).json({message:'Insufficient credits'})
+    }else{
+        await prisma.user.update({
+            where:{id:userId},
+            data: {credits:{decrement:5}}
+        }).then(()=>{isCreditDeducted=true});
+    }
     try{
 
     }catch(error:any){
