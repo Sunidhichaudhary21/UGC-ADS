@@ -1,6 +1,9 @@
 import {Request, Response} from 'express'
 import *as Sentry from "@sentry/node"
 import { prisma } from '../configs/prisma.js';
+import {v2 as cloudinary} from 'cloudinary'
+
+
 export const createProject= async(req:Request ,res:Response)=>{
     let tempProjectId: string;
     const {userId} =req.auth();
@@ -27,6 +30,15 @@ export const createProject= async(req:Request ,res:Response)=>{
         }).then(()=>{isCreditDeducted=true});
     }
     try{
+        let uploadImages =await Promise.all(
+            images.map(async(item:any)=>{
+                let result=await cloudinary.uploader.upload(item.path,
+                    {resource_type:'image'});
+                    return result.secure_url
+            })
+        )
+        const project =await prisma.
+
 
     }catch(error:any){
         Sentry.captureException(error);
