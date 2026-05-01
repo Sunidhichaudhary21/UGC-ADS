@@ -3,6 +3,20 @@ import *as Sentry from "@sentry/node"
 import { prisma } from '../configs/prisma.js';
 import {v2 as cloudinary} from 'cloudinary';
 import {GenerateContentConfig, HarmBlockThreshold,HarmCategory} from '@google/genai'
+import fs from 'fs';
+import path from 'path';
+import ai from '../configs/ai.js';
+
+const loadImage =(path:string ,mimeType:string)=>{
+    return {
+        inlineData:{
+            data:fs.readFileSync(path).toString('base64'),
+            mimeType
+
+        }
+    }
+
+}
 
 
 export const createProject= async(req:Request ,res:Response)=>{
@@ -84,6 +98,60 @@ export const createProject= async(req:Request ,res:Response)=>{
             ]
 
         }
+
+        // iimage to base64 structure for ai model
+
+        const img1base64 =loadImage(images[0].path,images[0].mimeType);
+        const img2base64 =loadImage(images[1].path,images[1].mimeType);
+
+        const prompt ={
+            text:`Combine the person and product into a realistic photo.
+            Make the person naturally hold or use the product.
+            Make lighting, shadows,scale and perspective.
+            make the person stand in professional studio lighting,
+            Output ecommerce -quality photo realistic imagery.
+            ${userPrompt}`
+        }
+
+        // generate the image using ai model 
+        const response :any =await ai.models.generateContent({
+            model,
+            contents:[img1base64 ,img2base64 ,prompt],
+            config:generationConfig,
+        })
+
+        // check if response is valid 
+        if(!response?.candidate?.[0]?.content?.parts){
+            throw new Error('Unexpected response')
+        }
+
+        const parts =response.candidates[0].content.parts;
+        let finalBuffer:Buffer|null=null
+
+        for(const part of parts){
+            if(part.inlineData){
+                finalBuffer=Buffer.from(part.inlineData.data,'base64')
+            }
+        }
+
+        if(!finalBuffer){
+            throw new Error("Failed to generate image")
+        }
+
+        const base64Image =`data:image/png;base64,${finalBuffer.toString('base64')}`
+
+        const uploadResult = await cloudinary.uploader.upload(base64Image,
+        {resource_type:'image'});
+
+        await prisma.project.update({
+            where:{id:project.id},
+            data:{
+                generatedImage:uploadResult.secure_url,
+                isGenerating:false
+            }
+        })
+
+        res.json({projectId:project.id})
 
 
 
