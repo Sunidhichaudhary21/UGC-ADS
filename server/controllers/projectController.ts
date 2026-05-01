@@ -1,7 +1,8 @@
 import {Request, Response} from 'express'
 import *as Sentry from "@sentry/node"
 import { prisma } from '../configs/prisma.js';
-import {v2 as cloudinary} from 'cloudinary'
+import {v2 as cloudinary} from 'cloudinary';
+import {GenerateContentConfig, HarmBlockThreshold,HarmCategory} from '@google/genai'
 
 
 export const createProject= async(req:Request ,res:Response)=>{
@@ -52,6 +53,37 @@ export const createProject= async(req:Request ,res:Response)=>{
             }
         })
         tempProjectId=project.id;
+
+        const model = 'gemini-3-pro-image-preview';
+        const generationConfig : GenerateContentConfig={
+            maxOutputTokens:32768,
+            temperature:1,
+            topP:0.95,
+            responseModalities:['IMAGE'],
+            imageConfig:{
+                aspectRatio: aspectRatio || '9:16',
+                imageSize:'!K'
+            },
+            safetySettings:[
+                {
+                    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                    threshold: HarmBlockThreshold.OFF,
+                },
+                {
+                    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                    threshold: HarmBlockThreshold.OFF,
+                },
+                {
+                    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                    threshold: HarmBlockThreshold.OFF,
+                },
+                {
+                    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+                    threshold: HarmBlockThreshold.OFF,
+                },
+            ]
+
+        }
 
 
 
