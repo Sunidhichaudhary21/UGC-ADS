@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProject, createVideo, deleteProject, getAllPublishedProjects } from '../controllers/peojectController.js';
+import { createProject, createVideo, deleteProject, getAllPublishedProjects } from '../controllers/projectController.js';
 import { protect } from '../middlewares/auth.js';
 import upload from '../configs/multer.js';
  const projectRouter =express.Router()
