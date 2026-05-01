@@ -24,7 +24,7 @@ export default function CTA() {
                             transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1, delay: 0.2 }}
                         >
                             Join thousands of brands creating viral UGC with AI.No
-                            credit card required. Start creating Now!!
+                            credit card required. Start creating Now!
                         </motion.p>
                         <motion.div
                             initial={{ y: 60, opacity: 0 }}
