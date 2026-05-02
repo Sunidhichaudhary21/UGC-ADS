@@ -246,6 +246,17 @@ export const createVideo= async(req:Request ,res:Response)=>{
             })
         }
 
+        const filename = `${userId}-${Date.now()}.mp4`;
+        const filePath =path.join('videos' ,filename)
+
+        // create the images directory if it doesnot exist
+
+        fs.mkdirSync('videos' ,{recursive:true})
+
+        if(!operation.response.generatedVideo){
+            throw new Error(operation.response.raiMediaFilteredReasons[0])
+        }
+
         
 
 
