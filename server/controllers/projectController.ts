@@ -6,6 +6,7 @@ import {GenerateContentConfig, HarmBlockThreshold,HarmCategory} from '@google/ge
 import fs from 'fs';
 import path from 'path';
 import ai from '../configs/ai.js';
+import axios from axios;
 
 const loadImage =(path:string ,mimeType:string)=>{
     return {
@@ -219,7 +220,39 @@ export const createVideo= async(req:Request ,res:Response)=>{
             throw new Error('Generated image not found');
         }
 
+        const image =await axios.get(project.generatedImage,{responseType:'arrayBuffer',})
+
+        const imageBytes:any =Buffer.from(image.data)
+
+        let operation: any =await ai.models.generateVideos({
+            model,
+            prompt,
+            image:{
+                imageBytes:imageBytes.toString('base64'),
+                mimeType: 'image/png',
+            },
+            config:{
+                aspectRatio:project?.aspectRatio || '9:16',
+                numberOfVideos:1,
+                resolution:'720p',
+            }
+        })
+
+        while(!operation.done){
+            console.log('Waiting for video generation to complete...');
+            await new Promise((resolve)=>setTimeout(resolve,10000));
+            operation = await ai.operations.getVideosOperation({
+                operation:operation,
+            })
+        }
+
         
+
+
+
+
+
+
 
 
 
