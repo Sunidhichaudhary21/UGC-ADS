@@ -1,0 +1,12 @@
+{
+  "name": "ugc-project",
+  "version": "1.0.0",
+  "description": "UGC project with client and server",
+  "type": "module",
+  "scripts": {
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm run server",
+    "start": "cd server && npm run start",
+    "build": "cd client && npm run build && cd ../server && npm run build"
+  }
+}

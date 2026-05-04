@@ -6,7 +6,7 @@ import {GenerateContentConfig, HarmBlockThreshold,HarmCategory} from '@google/ge
 import fs from 'fs';
 import path from 'path';
 import ai from '../configs/ai.js';
-import axios from axios;
+import axios from 'axios';
 import { error } from 'console';
 
 const loadImage =(path:string ,mimeType:string)=>{
