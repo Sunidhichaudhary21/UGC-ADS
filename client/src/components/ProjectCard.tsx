@@ -49,7 +49,21 @@ const ProjectCard = ({
   }
 
 const togglePublish=async(projectId:string)=>{
-  console.log(projectId);
+  try{
+  const token = await getToken();
+  const {data}=await api.get(`/api/user/publish/${projectId}`,{
+    headers:{Authorization:`Bearer ${token}`}
+  })
+  setGenerations((generations) =>
+    generations.map((g) => (g.id === projectId ? { ...g, isPublished: !g.isPublished } : g))
+  );
+  toast.success(data.isPublished? 'project Published' :'project unpublished');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+}catch(error:any){
+  toast.error(error?.response?.data?.message || error.message);
+  console.log(error);
+}
+ 
 
  
 }
