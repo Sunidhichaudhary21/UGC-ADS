@@ -1,25 +1,53 @@
 import { useEffect, useState } from "react"
 import type { Project } from "../types"
-import { dummyGenerations } from "../assets/assets"
 import { Loader2Icon } from "lucide-react"
 import ProjectCard from "../components/ProjectCard"
 import { PrimaryButton } from "../components/Buttons"
+import { useAuth, useUser } from "@clerk/react"
+import { useNavigate } from "react-router-dom"
+import api from "../configs/axios"
+import toast from "react-hot-toast"
 
 
 const MyGeneration = () => {
+  const {user,isLoaded}=useUser()
+  const {getToken} =useAuth()
+  const navigate =useNavigate()
+
   const [generations, setGenerations] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
 
 
   const fetchMyGenerations = async () => {
-    setTimeout(() => {
-      setGenerations(dummyGenerations);
+    try{
+      const token =await getToken();
+      const {data} =await api.get('/api/user/projects',{
+        headers:{Authorization:`Bearer ${token}`}
+      })
+      setGenerations(data.projects)
       setLoading(false)
-    }, 3000)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }catch(error:any){
+      toast.error(error?.response?.data?.message || error.message);
+      console.log(error);
+
+
+    }
+    
+    
+    
   }
   useEffect(() => {
-    fetchMyGenerations() 
-  },[])
+    if(user){
+       // eslint-disable-next-line react-hooks/set-state-in-effect
+       fetchMyGenerations();
+
+    }else if(isLoaded && !user){
+      navigate('/')
+    }
+   
+  },[user])
 
   return loading ?(
     <div className="flex items-center justify-center min-h-screen">
