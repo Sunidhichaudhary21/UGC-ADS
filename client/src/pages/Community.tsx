@@ -1,21 +1,29 @@
 import { useEffect, useState }from "react";
 import type { Project }from "../types"
-import { dummyGenerations } from "../assets/assets";
 import { Loader2Icon } from "lucide-react";
 import ProjectCard from "../components/ProjectCard";
+import toast from "react-hot-toast";
 
 const Community = () => {
   const [projects, setProjects]=useState<Project[]>([])
   const [loading, setLoading]=useState(true)
   
   const fetchProjects=async ()=>{
-    setTimeout(()=>{
-      setProjects(dummyGenerations);
+    try{
+      const {data} = await api.get('/api/project/published')
+      setProjects(data.projects)
       setLoading(false)
-    },3000)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }catch(error:any){
+      toast.error(error?.response?.data?.message || error.message)
+      console.log(error);
+
+    }
   }
 
   useEffect(()=>{
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProjects()
   },[])
   
