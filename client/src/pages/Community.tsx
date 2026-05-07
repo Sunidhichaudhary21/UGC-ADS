@@ -29,7 +29,7 @@ const Community = () => {
       <div className="max-w-6x1 mx-auto">
         <header className="mb-12">
           <h1 className="text-3x1 md:text-4x1 font-semibold mb-4">Community</h1>
-          <p className="text-black-400">See what others are creating with UGC.ai</p>
+          <p className="text-black-400">See what others  are creating with UGC.ai</p>
         </header>
 
         {/* projects list */}
