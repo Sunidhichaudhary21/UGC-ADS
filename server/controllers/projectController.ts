@@ -23,7 +23,7 @@ const loadImage =(path:string ,mimeType:string)=>{
 
 export const createProject= async(req:Request ,res:Response)=>{
     let tempProjectId: string;
-    const {userId} =req.auth();
+    const {userId} = req.auth;
     let isCreditDeducted =false;
 
     const{name ='New Project' , aspectRatio, userPrompt , productName , productDescription, targetLength=5} =req.body;
@@ -179,7 +179,7 @@ export const createProject= async(req:Request ,res:Response)=>{
 }
 
 export const createVideo= async(req:Request ,res:Response)=>{
-    const {userId}=req.auth()
+    const {userId} = req.auth;
     const {projectId} =req.body;
     let isCreditDeducted=false;
     const user =await prisma.user.findUnique({
@@ -324,7 +324,7 @@ export const getAllPublishedProjects= async(req:Request ,res:Response)=>{
 
 export const deleteProject= async(req:Request ,res:Response)=>{
     try{
-        const {userId} =req.auth();
+        const {userId} = req.auth;
         const {projectId} =req.params;
         const project =await prisma.project.findUnique({
             where: {id: projectId as string,userId}

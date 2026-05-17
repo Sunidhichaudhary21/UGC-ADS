@@ -6,7 +6,7 @@ import { prisma } from '../configs/prisma.js';
 //  get user credits
 export const getUserCredits=async(req:Request , res:Response)=>{
     try{
-        const {userId}=req.auth();
+        const {userId}=req.auth;
         if(!userId) {return res.status(401).json({message:'Unauthorized'})}
 
         const user=await prisma.user.findUnique({
@@ -25,7 +25,7 @@ export const getUserCredits=async(req:Request , res:Response)=>{
 
 export const getAllProjects=async(req:Request , res:Response)=>{
     try{
-        const {userId}=req.auth();
+        const {userId}=req.auth;
         const projects = await prisma.project.findMany({
             where:{userId},
             orderBy:{createdAt:'desc'}
@@ -46,7 +46,7 @@ export const getAllProjects=async(req:Request , res:Response)=>{
 
 export const getProjectById=async(req:Request , res:Response)=>{
     try{
-        const {userId}=req.auth();
+        const {userId}=req.auth;
         const {projectId} =req.params;
         if (Array.isArray(projectId)) {
             return res.status(400).json({ message: "Invalid project ID format" });
@@ -71,7 +71,7 @@ export const getProjectById=async(req:Request , res:Response)=>{
 
 export const toggleProjectPublic=async(req:Request , res:Response)=>{
     try{
-        const {userId}=req.auth();
+        const {userId}=req.auth;
         const {projectId} =req.params;
         if (Array.isArray(projectId)) {
             return res.status(400).json({ message: "Invalid project ID format" });

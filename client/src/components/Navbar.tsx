@@ -165,7 +165,7 @@ export default function Navbar() {
         >
           Sign in
         </button>
-        <PrimaryButton onClick={() => {setIsOpen(false); openSignUp()}}mm>
+        <PrimaryButton onClick={() => {setIsOpen(false); openSignUp()}}>
           Get Started
         </PrimaryButton>
 
