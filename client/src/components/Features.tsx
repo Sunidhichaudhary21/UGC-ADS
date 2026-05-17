@@ -33,13 +33,13 @@ export default function Features() {
                                     card.classList.add("transition", "duration-300", "hover:border-white/15", "hover:-translate-y-1");
                                 }
                             }}
-                            className="rounded-2xl p-6 bg-white/10 border border-white/20"
+                            className="rounded-[2rem] p-8 glass-panel group transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)] hover:border-indigo-500/40"
                         >
-                            <div className="w-12 h-12 rounded-lg bg-white/15 flex items-center justify-center mb-4">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 border border-indigo-500/20">
                                 {feature.icon}
                             </div>
-                            <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                            <p className="text-white/80 text-sm leading-relaxed">
+                            <h3 className="text-xl font-semibold mb-3 tracking-wide text-white/95">{feature.title}</h3>
+                            <p className="text-white/60 text-sm leading-relaxed">
                                 {feature.desc}
                             </p>
                         </motion.div>

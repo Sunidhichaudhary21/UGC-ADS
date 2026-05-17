@@ -6,7 +6,7 @@ import { PrimaryButton } from "../components/Buttons";
 import { useAuth, useUser } from "@clerk/react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import api from "../configs/axios";
 const Genetator = () => {
 
   const {user} =useUser()
@@ -67,7 +67,7 @@ const Genetator = () => {
 
   return (
     <div className="min-h-screen text-white p-6 md:p-12 mt-29">
-      <form onSubmit={handleGenerate} className="max-w-4xl mx-auto mb-40">
+      <form onSubmit={handleGenerate} className="max-w-4xl mx-auto mb-40 glass-panel p-8 md:p-12 rounded-[2rem]">
         <Title
           heading="Create In-Context Image"
           description="Upload
@@ -110,8 +110,7 @@ const Genetator = () => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Name your project"
                 required
-                className="w-full bg-white/3 rounded-lg border-2 p-4 
-                    text-sm border-blue-200/20 focus:border-blue-500/60 outline-none transition-all"
+                className="w-full bg-[#030712]/50 rounded-xl border p-4 text-sm border-white/10 focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all shadow-inner"
               />
             </div>
             <div className="mb-4 text-gray-300">
@@ -125,8 +124,7 @@ const Genetator = () => {
                 onChange={(e) => setProductName(e.target.value)}
                 placeholder="Enter the name of product"
                 required
-                className="w-full bg-white/3 rounded-lg border-2 p-4
-                text-sm border-blue-200/20 focus:border-blue-500/60 outline-none transition-all"
+                className="w-full bg-[#030712]/50 rounded-xl border p-4 text-sm border-white/10 focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all shadow-inner"
               />
             </div>
             <div className="mb-4 text-gray-300">
@@ -144,8 +142,7 @@ const Genetator = () => {
                 value={productDescription}
                 onChange={(e) => setProductDescription(e.target.value)}
                 placeholder="Enter the description of the product"
-                className="w-full bg-white/3 rounded-lg border-2 p-4 text-sm
-                 border-blue-200/20 focus:border-blue-500/60 outline-none resize-none transition-all"
+                className="w-full bg-[#030712]/50 rounded-xl border p-4 text-sm border-white/10 focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none transition-all shadow-inner"
               />
             </div>
 
@@ -154,14 +151,12 @@ const Genetator = () => {
               <div className="flex gap-3">
                 <RectangleVerticalIcon
                   onClick={() => setAspectRatio("9:16")}
-                  className={`p-2.5 size-13 bg-white/6 rounded transition-all ring-2
-                  ring-transparent cursor-pointer ${aspectRatio === "9:16" ? "ring-blue-500/60 bg-white/10" : ""}`}
+                  className={`p-2.5 size-13 bg-white/5 rounded-xl transition-all border border-transparent cursor-pointer hover:bg-white/10 ${aspectRatio === "9:16" ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)]" : "text-white/60"}`}
                 />
                 
                 <RectangleHorizontalIcon
                   onClick={() => setAspectRatio("16:9")}
-                  className={`p-2.5 size-13 bg-white/6 rounded transition-all ring-2
-                  ring-transparent cursor-pointer ${aspectRatio === "16:9" ? "ring-blue-500/60 bg-white/10" : ""}`}
+                  className={`p-2.5 size-13 bg-white/5 rounded-xl transition-all border border-transparent cursor-pointer hover:bg-white/10 ${aspectRatio === "16:9" ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)]" : "text-white/60"}`}
                 />
               </div>
             </div>
@@ -180,8 +175,7 @@ const Genetator = () => {
                 value={userPrompt}
                 onChange={(e) => setUserPrompt(e.target.value)}
                 placeholder="Describe how you want the naration to be."
-                className="w-full bg-white/3 rounded-lg border-2 p-4 text-sm
-              border-blue-200/20 focus:border-blue-500/60 outline-none resize-none transition-all"
+                className="w-full bg-[#030712]/50 rounded-xl border p-4 text-sm border-white/10 focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none transition-all shadow-inner"
               />
             </div>
           </div>

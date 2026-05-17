@@ -65,7 +65,7 @@ export default function Navbar() {
       viewport={{ once: true }}
       transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
     >
-      <div className="max-w-6xl mx-auto flex items-center justify-between bg-primary/90 backdrop-blur-md border border-blue-200/20 rounded-2xl p-3 shadow-[0_0_40px_rgba(37,99,235,0.2)]">
+      <div className="max-w-6xl mx-auto flex items-center justify-between bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-3 px-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-500 hover:shadow-[0_8px_32px_0_rgba(99,102,241,0.25)] hover:border-white/20">
         <Link to="/" onClick={() => scrollTo(0, 0)}>
           <img src={assets.logo} alt="logo" className="h-8" />
         </Link>

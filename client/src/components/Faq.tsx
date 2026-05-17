@@ -34,13 +34,13 @@ export default function Faq() {
                                     card.classList.add("transition", "duration-300");
                                 }
                             }}
-                            className="group bg-white/10 rounded-xl select-none border border-white/20"
+                            className="group glass-panel rounded-2xl select-none border border-white/10 shadow-inner mb-4 overflow-hidden"
                         >
-                            <summary className="flex items-center justify-between p-4 cursor-pointer">
-                                <h4 className="font-medium">{faq.question}</h4>
-                                <ChevronDownIcon className="w-5 h-5 text-white/80 group-open:rotate-180 transition-transform" />
+                            <summary className="flex items-center justify-between p-5 cursor-pointer bg-white/5 hover:bg-white/10 transition-colors">
+                                <h4 className="font-medium text-white/90 text-lg tracking-wide">{faq.question}</h4>
+                                <ChevronDownIcon className="w-5 h-5 text-indigo-400 group-open:rotate-180 transition-transform duration-300" />
                             </summary>
-                            <p className="p-4 pt-0 text-sm text-white/80 leading-relaxed">
+                            <p className="p-5 text-sm text-white/60 leading-relaxed bg-[#030712]/50 border-t border-white/5">
                                 {faq.answer}
                             </p>
                         </motion.details>

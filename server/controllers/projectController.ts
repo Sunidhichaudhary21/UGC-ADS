@@ -8,7 +8,7 @@ import path from 'path';
 import ai from '../configs/ai.js';
 import axios from 'axios';
 import { error } from 'console';
-
+import { getAuth } from '@clerk/express';
 const loadImage =(path:string ,mimeType:string)=>{
     return {
         inlineData:{
@@ -23,7 +23,7 @@ const loadImage =(path:string ,mimeType:string)=>{
 
 export const createProject= async(req:Request ,res:Response)=>{
     let tempProjectId: string;
-    const {userId} = req.auth;
+    const {userId} = getAuth(req);
     let isCreditDeducted =false;
 
     const{name ='New Project' , aspectRatio, userPrompt , productName , productDescription, targetLength=5} =req.body;
@@ -179,7 +179,7 @@ export const createProject= async(req:Request ,res:Response)=>{
 }
 
 export const createVideo= async(req:Request ,res:Response)=>{
-    const {userId} = req.auth;
+    const {userId} = getAuth(req);
     const {projectId} =req.body;
     let isCreditDeducted=false;
     const user =await prisma.user.findUnique({
@@ -324,7 +324,7 @@ export const getAllPublishedProjects= async(req:Request ,res:Response)=>{
 
 export const deleteProject= async(req:Request ,res:Response)=>{
     try{
-        const {userId} = req.auth;
+        const {userId} = getAuth(req);
         const {projectId} =req.params;
         const project =await prisma.project.findUnique({
             where: {id: projectId as string,userId}

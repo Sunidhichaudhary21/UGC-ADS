@@ -3,7 +3,7 @@ import type { Project }from "../types"
 import { Loader2Icon } from "lucide-react";
 import ProjectCard from "../components/ProjectCard";
 import toast from "react-hot-toast";
-
+import api from "../configs/axios";
 const Community = () => {
   const [projects, setProjects]=useState<Project[]>([])
   const [loading, setLoading]=useState(true)
@@ -28,16 +28,19 @@ const Community = () => {
   },[])
   
   return loading?(
-    <div className="flex items-center justify-center min-h-screen">
-      <Loader2Icon className='size-7 animate-spin text-blue-300'/>
-      
+    <div className="flex items-center justify-center min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#030712] to-[#030712]" />
+      <Loader2Icon className='size-10 animate-spin text-indigo-400 relative z-10'/>
     </div> 
   ):(
-    <div className="min-h-screen text-white p-6 md:p-12 my-28">
-      <div className="max-w-6x1 mx-auto">
-        <header className="mb-12">
-          <h1 className="text-3x1 md:text-4x1 font-semibold mb-4">Community</h1>
-          <p className="text-black-400">See what others  are creating with UGC.ai</p>
+    <div className="min-h-screen text-white p-6 md:p-12 mt-28 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-indigo-900/10 pointer-events-none" />
+      <div className="max-w-6xl mx-auto relative z-10">
+        <header className="mb-14 text-center">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
+            <span className="text-gradient">Community</span>
+          </h1>
+          <p className="text-white/60 max-w-2xl mx-auto">See what others are creating with UGC.ai and draw inspiration for your next project.</p>
         </header>
 
         {/* projects list */}

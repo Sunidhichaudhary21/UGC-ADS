@@ -6,7 +6,8 @@ import Title from './Title';
 export default function Pricing() {
 
     return (
-        <section id="pricing" className="py-20 bg-white/10 border-t border-white/20">
+        <section id="pricing" className="py-20 2xl:py-32 relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-950/20 to-transparent pointer-events-none" />
             <div className="max-w-6xl mx-auto px-4">
 
                 <Title

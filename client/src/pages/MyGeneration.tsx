@@ -50,16 +50,18 @@ const MyGeneration = () => {
   },[user])
 
   return loading ?(
-    <div className="flex items-center justify-center min-h-screen">
-      <Loader2Icon className="size-7 animate-spin text-blue-300"/>
+    <div className="flex items-center justify-center min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#030712] to-[#030712]" />
+      <Loader2Icon className="size-10 animate-spin text-indigo-400 relative z-10"/>
     </div>
 
   ):(
-    <div className="min-h-screen text-white p-6 md:p-12 my-28">
-     <div className="max-w-6x1 mx-auto">
-       <header className="mb-12">
-        <h1 className="text-3x1 md:text-4x1 font-semibold mb-4">My Generations</h1>
-       <p className="text-black-400">View and manage your AI-generated content</p>
+    <div className="min-h-screen text-white p-6 md:p-12 mt-28 relative overflow-hidden">
+     <div className="absolute inset-0 bg-gradient-to-bl from-indigo-900/10 via-transparent to-purple-900/10 pointer-events-none" />
+     <div className="max-w-6xl mx-auto relative z-10">
+       <header className="mb-14 text-center">
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">My <span className="text-gradient">Generations</span></h1>
+       <p className="text-white/60 max-w-2xl mx-auto">View and manage your AI-generated lifestyle images and videos</p>
     </header>
     {/* generations list */}
     <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
@@ -67,13 +69,16 @@ const MyGeneration = () => {
         <ProjectCard key={gen.id} gen={gen} setGenerations={setGenerations} />
       ))}
     </div>
-    {generations.length ===0 &&(
-      <div className="text-center py-20 bg-white/5 rounded-x1 border border-white/10">
-        <h3 className="text-xl font-medium mb-2">No generations yet</h3>
-        <p className="text-gray-400 mb-6">Start creating stunning product photos today</p>
-        <PrimaryButton onClick={()=>window.location.href='/generate'}>
-          Create New Generations
-        </PrimaryButton>
+    {generations.length === 0 &&(
+      <div className="text-center py-24 glass-panel rounded-[2rem] border border-white/10 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="relative z-10">
+          <h3 className="text-2xl font-bold tracking-tight mb-3 text-white/95">No generations yet</h3>
+          <p className="text-white/50 mb-8 max-w-md mx-auto">Start creating stunning product photos and immersive lifestyle videos today with our AI.</p>
+          <PrimaryButton onClick={()=>window.location.href='/generate'} className="px-8 shadow-lg">
+            Create New Generation
+          </PrimaryButton>
+        </div>
       </div>
     )}
   </div>

@@ -55,14 +55,14 @@ export default function Hero() {
                                 </span>
                             </motion.a>
 
-                            <motion.h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 max-w-xl"
+                            <motion.h1 className="text-5xl md:text-7xl font-black tracking-tight leading-tight mb-6 max-w-xl"
                                 initial={{ y: 60, opacity: 0 }}
                                 whileInView={{ y: 0, opacity: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1, delay: 0.1 }}
                             >
                                  Create your UGC<br />
-                                <span className="text-white">
+                                <span className="text-gradient">
                                     in seconds
                                 </span>
                             </motion.h1>
@@ -134,20 +134,20 @@ export default function Hero() {
                             viewport={{ once: true }}
                             transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1, delay: 0.5 }}
                         >
-                            <motion.div className="rounded-3xl overflow-hidden border border-blue-200/20 shadow-2xl shadow-blue-500/20 bg-linear-to-b from-primary/70 to-transparent">
-                                <div className="relative aspect-16/10 bg-dark-card">
+                            <motion.div className="rounded-3xl p-1 bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-transparent shadow-[0_0_40px_rgba(99,102,241,0.2)]">
+                                <div className="rounded-[22px] overflow-hidden bg-[#030712] relative aspect-16/10">
                                     <img
                                         src={mainImageUrl}
                                         alt="agency-work-preview"
-                                        className="w-full h-full object-cover object-center"
+                                        className="w-full h-full object-cover object-center opacity-90 transition hover:opacity-100"
                                     />
 
-                                    <div className="absolute left-4 top-4 px-3 py-1 rounded-full bg-primary/80 backdrop-blur-sm text-xs">
+                                    <div className="absolute left-4 top-4 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-xs font-medium text-white/90">
                                         Social-Ready
                                     </div>
 
                                     <div className="absolute right-4 bottom-4">
-                                        <button className="inline-flex items-center gap-2 rounded-full px-4 py-2 bg-white/15 backdrop-blur-sm hover:bg-white/25 transition focus:outline-none">
+                                        <button className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 hover:scale-105 transition-all focus:outline-none">
                                             <PlayIcon className="size-4" />
                                             <span className="text-xs">Preview</span>
                                         </button>
@@ -192,7 +192,7 @@ export default function Hero() {
             </section>
 
             {/* LOGO MARQUEE */}
-            <motion.section className="border-y border-white/20 bg-white/10 max-md:mt-10"
+            <motion.section className="border-y border-white/5 bg-white/5 backdrop-blur-sm max-md:mt-10"
                 initial={{ y: 60, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
