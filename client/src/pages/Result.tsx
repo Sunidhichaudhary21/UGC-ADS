@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Project } from "../types";
 import { ImageIcon, Loader2Icon, RefreshCwIcon, SparkleIcon, VideoIcon } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { GhostButton, PrimaryButton } from "../components/Buttons";
 import { useAuth, useUser } from "@clerk/react";
 import api from "../configs/axios";
@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 const Result = () => {
 
-  const {projectId} =userParams()
+  const {projectId} = useParams<{ projectId: string }>()
   const {getToken} = useAuth()
   const {user, isLoaded} =useUser()
   const navigate =useNavigate()
@@ -193,7 +193,4 @@ const handleGenerateVideo=async()=>{
 };
 
 export default Result;
-function userParams(): { projectId: any; } {
-  throw new Error("Function not implemented.");
-}
 
