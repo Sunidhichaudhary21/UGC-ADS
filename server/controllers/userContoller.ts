@@ -3,6 +3,7 @@ import {Request,Response} from 'express'
 import * as Sentry from "@sentry/node" ;
 import { prisma } from '../configs/prisma.js';
 import { getAuth } from '@clerk/express';
+import { getOrCreateUser } from '../helpers/user.js';
 
 //  get user credits
 export const getUserCredits=async(req:Request , res:Response)=>{
@@ -10,10 +11,8 @@ export const getUserCredits=async(req:Request , res:Response)=>{
         const {userId}=getAuth(req);
         if(!userId) {return res.status(401).json({message:'Unauthorized'})}
 
-        const user=await prisma.user.findUnique({
-            where: {id:userId}
-        })
-        res.json({credits:user?.credits})
+        const user = await getOrCreateUser(userId);
+        res.json({credits:user.credits})
 
     }catch(error:any){
         Sentry.captureException(error)
@@ -27,6 +26,7 @@ export const getUserCredits=async(req:Request , res:Response)=>{
 export const getAllProjects=async(req:Request , res:Response)=>{
     try{
         const {userId}=getAuth(req);
+        if(!userId) {return res.status(401).json({message:'Unauthorized'})}
         const projects = await prisma.project.findMany({
             where:{userId},
             orderBy:{createdAt:'desc'}
@@ -48,6 +48,7 @@ export const getAllProjects=async(req:Request , res:Response)=>{
 export const getProjectById=async(req:Request , res:Response)=>{
     try{
         const {userId}=getAuth(req);
+        if(!userId) {return res.status(401).json({message:'Unauthorized'})}
         const {projectId} =req.params;
         if (Array.isArray(projectId)) {
             return res.status(400).json({ message: "Invalid project ID format" });
@@ -73,6 +74,7 @@ export const getProjectById=async(req:Request , res:Response)=>{
 export const toggleProjectPublic=async(req:Request , res:Response)=>{
     try{
         const {userId}=getAuth(req);
+        if(!userId) {return res.status(401).json({message:'Unauthorized'})}
         const {projectId} =req.params;
         if (Array.isArray(projectId)) {
             return res.status(400).json({ message: "Invalid project ID format" });

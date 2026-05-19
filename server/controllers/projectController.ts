@@ -1,6 +1,7 @@
 import {Request, Response} from 'express'
 import *as Sentry from "@sentry/node"
 import { prisma } from '../configs/prisma.js';
+import { getOrCreateUser } from '../helpers/user.js';
 import {v2 as cloudinary} from 'cloudinary';
 import {GenerateContentConfig, HarmBlockThreshold,HarmCategory} from '@google/genai'
 import fs from 'fs';
@@ -24,6 +25,7 @@ const loadImage =(path:string ,mimeType:string)=>{
 export const createProject= async(req:Request ,res:Response)=>{
     let tempProjectId: string;
     const {userId} = getAuth(req);
+    if(!userId) {return res.status(401).json({message:'Unauthorized'})}
     let isCreditDeducted =false;
 
     const{name ='New Project' , aspectRatio, userPrompt , productName , productDescription, targetLength=5} =req.body;
@@ -34,11 +36,9 @@ export const createProject= async(req:Request ,res:Response)=>{
         return res.status(400).json({message:'please upload atleast 2 images'})
     }
 
-    const user =await prisma.user.findUnique({
-        where: {id:userId}
-    })
+    const user = await getOrCreateUser(userId);
 
-    if(!user || user.credits<5){
+    if(user.credits<5){
         return res.status(401).json({message:'Insufficient credits'})
     }else{
         await prisma.user.update({
@@ -63,7 +63,7 @@ export const createProject= async(req:Request ,res:Response)=>{
                 userPrompt,
                 aspectRatio,
                 targetLength:parseInt(targetLength),
-                uploadImages,
+                uploadedImages: uploadImages,
                 isGenerating:true
 
             }
@@ -180,12 +180,11 @@ export const createProject= async(req:Request ,res:Response)=>{
 
 export const createVideo= async(req:Request ,res:Response)=>{
     const {userId} = getAuth(req);
+    if(!userId) {return res.status(401).json({message:'Unauthorized'})}
     const {projectId} =req.body;
-    let isCreditDeducted=false;
-    const user =await prisma.user.findUnique({
-        where:{id:userId}
-    })
-    if(!user || user.credits<10){
+    let isCreditDeducted = false;
+    const user = await getOrCreateUser(userId);
+    if(user.credits<10){
         return res.status(401).json({message:'Insufficient credits'})
 
     }
@@ -221,7 +220,7 @@ export const createVideo= async(req:Request ,res:Response)=>{
             throw new Error('Generated image not found');
         }
 
-        const image =await axios.get(project.generatedImage,{responseType:'arrayBuffer',})
+        const image =await axios.get(project.generatedImage,{responseType:'arraybuffer',})
 
         const imageBytes:any =Buffer.from(image.data)
 
@@ -325,6 +324,7 @@ export const getAllPublishedProjects= async(req:Request ,res:Response)=>{
 export const deleteProject= async(req:Request ,res:Response)=>{
     try{
         const {userId} = getAuth(req);
+        if(!userId) {return res.status(401).json({message:'Unauthorized'})}
         const {projectId} =req.params;
         const project =await prisma.project.findUnique({
             where: {id: projectId as string,userId}
