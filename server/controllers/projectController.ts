@@ -21,6 +21,158 @@ const loadImage =(path:string ,mimeType:string)=>{
 
 }
 
+function generateAdSvg(aspectRatio: string, productName: string, productDescription: string, productUrl: string, modelUrl: string): string {
+    const isVertical = aspectRatio === "9:16";
+    const width = isVertical ? 1080 : 1920;
+    const height = isVertical ? 1920 : 1080;
+
+    if (isVertical) {
+        return `
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+            <defs>
+                <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#070a13" />
+                    <stop offset="50%" stop-color="#0f172a" />
+                    <stop offset="100%" stop-color="#1e1b4b" />
+                </linearGradient>
+                <clipPath id="circleClip">
+                    <circle cx="540" cy="720" r="380" />
+                </clipPath>
+                <clipPath id="rectClip">
+                    <rect x="520" y="980" width="420" height="420" rx="50" />
+                </clipPath>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#6366f1" flood-opacity="0.5"/>
+                </filter>
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="15" stdDeviation="20" flood-color="#000000" flood-opacity="0.7"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="${width}" height="${height}" fill="url(#bgGrad)" />
+            
+            <!-- Grid lines decoration -->
+            <path d="M 0 320 L 1080 320 M 0 640 L 1080 640 M 0 960 L 1080 960 M 0 1280 L 1080 1280 M 0 1600 L 1080 1600" stroke="white" stroke-opacity="0.04" stroke-width="2" />
+            <path d="M 270 0 L 270 1920 M 540 0 L 540 1920 M 810 0 L 810 1920" stroke="white" stroke-opacity="0.04" stroke-width="2" />
+
+            <!-- Brand Badge -->
+            <g transform="translate(540, 140)">
+                <rect x="-180" y="-30" width="360" height="60" rx="30" fill="white" fill-opacity="0.05" stroke="white" stroke-opacity="0.15" stroke-width="1.5" />
+                <circle cx="-130" cy="0" r="10" fill="#6366f1" />
+                <text x="-105" y="7" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" fill="#a5b4fc" letter-spacing="4">UGC AD CREATIVE</text>
+            </g>
+
+            <!-- Model Image -->
+            <g filter="url(#shadow)">
+                <circle cx="540" cy="720" r="385" fill="none" stroke="#6366f1" stroke-width="6" stroke-opacity="0.5" />
+                <g clip-path="url(#circleClip)">
+                    <image href="${modelUrl}" xlink:href="${modelUrl}" x="160" y="340" width="760" height="760" preserveAspectRatio="xMidYMid slice" />
+                </g>
+                <rect x="390" y="1060" width="300" height="50" rx="25" fill="#6366f1" />
+                <text x="540" y="1092" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" fill="white" text-anchor="middle" letter-spacing="2">UGC CREATIVE</text>
+            </g>
+
+            <!-- Floating Product Image Overlay -->
+            <g filter="url(#glow)">
+                <rect x="516" y="976" width="428" height="428" rx="54" fill="none" stroke="#a855f7" stroke-width="6" />
+                <g clip-path="url(#rectClip)">
+                    <image href="${productUrl}" xlink:href="${productUrl}" x="520" y="980" width="420" height="420" preserveAspectRatio="xMidYMid slice" />
+                </g>
+                <rect x="560" y="1000" width="160" height="44" rx="22" fill="#a855f7" />
+                <text x="640" y="1027" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" fill="white" text-anchor="middle" letter-spacing="2">PRODUCT</text>
+            </g>
+
+            <!-- Bottom Ad Messaging & CTA -->
+            <g transform="translate(540, 1540)">
+                <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-1">${productName.toUpperCase()}</text>
+                
+                <text x="0" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="500" fill="#94a3b8" text-anchor="middle">
+                    ${productDescription ? (productDescription.length > 55 ? productDescription.substring(0, 52) + '...' : productDescription) : 'Best-in-class product experience.'}
+                </text>
+
+                <!-- CTA Button -->
+                <g transform="translate(0, 160)">
+                    <rect x="-240" y="-45" width="480" height="90" rx="45" fill="#6366f1" filter="url(#glow)" />
+                    <text x="0" y="12" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="900" fill="white" text-anchor="middle" letter-spacing="4">ORDER NOW - 50% OFF</text>
+                </g>
+            </g>
+        </svg>
+        `;
+    } else {
+        return `
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+            <defs>
+                <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#070a13" />
+                    <stop offset="50%" stop-color="#0f172a" />
+                    <stop offset="100%" stop-color="#1e1b4b" />
+                </linearGradient>
+                <clipPath id="modelClip">
+                    <rect x="100" y="200" width="700" height="700" rx="60" />
+                </clipPath>
+                <clipPath id="productClip">
+                    <rect x="1120" y="200" width="700" height="700" rx="60" />
+                </clipPath>
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="15" stdDeviation="25" flood-color="#000000" flood-opacity="0.6"/>
+                </filter>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#6366f1" flood-opacity="0.4"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="${width}" height="${height}" fill="url(#bgGrad)" />
+
+            <!-- Grid lines -->
+            <path d="M 0 180 L 1920 180 M 0 540 L 1920 540 M 0 900 L 1920 900" stroke="white" stroke-opacity="0.02" stroke-width="2" />
+            <path d="M 480 0 L 480 1080 M 960 0 L 960 1080 M 1440 0 L 1440 1080" stroke="white" stroke-opacity="0.02" stroke-width="2" />
+
+            <!-- Brand Badge -->
+            <g transform="translate(960, 100)">
+                <rect x="-180" y="-25" width="360" height="50" rx="25" fill="white" fill-opacity="0.05" stroke="white" stroke-opacity="0.15" stroke-width="1.5" />
+                <circle cx="-130" cy="0" r="8" fill="#a855f7" />
+                <text x="-105" y="6" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" fill="#c084fc" letter-spacing="3">UGC AD PLATFORM</text>
+            </g>
+
+            <!-- Model (Left) -->
+            <g filter="url(#shadow)">
+                <rect x="96" y="196" width="708" height="708" rx="64" fill="none" stroke="#6366f1" stroke-width="4" stroke-opacity="0.4" />
+                <g clip-path="url(#modelClip)">
+                    <image href="${modelUrl}" xlink:href="${modelUrl}" x="100" y="200" width="700" height="700" preserveAspectRatio="xMidYMid slice" />
+                </g>
+                <rect x="140" y="230" width="180" height="44" rx="22" fill="#6366f1" />
+                <text x="230" y="257" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" fill="white" text-anchor="middle" letter-spacing="1">UGC MODEL</text>
+            </g>
+
+            <!-- Product (Right) -->
+            <g filter="url(#glow)">
+                <rect x="1116" y="196" width="708" height="708" rx="64" fill="none" stroke="#a855f7" stroke-width="4" stroke-opacity="0.4" />
+                <g clip-path="url(#productClip)">
+                    <image href="${productUrl}" xlink:href="${productUrl}" x="1120" y="200" width="700" height="700" preserveAspectRatio="xMidYMid slice" />
+                </g>
+                <rect x="1160" y="230" width="180" height="44" rx="22" fill="#a855f7" />
+                <text x="1250" y="257" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" fill="white" text-anchor="middle" letter-spacing="1">YOUR PRODUCT</text>
+            </g>
+
+            <!-- Glassmorphic Card (Center) -->
+            <g transform="translate(960, 540)" filter="url(#shadow)">
+                <rect x="-240" y="-180" width="480" height="360" rx="40" fill="#0f172a" fill-opacity="0.8" stroke="white" stroke-opacity="0.15" stroke-width="2" />
+                <text x="0" y="-100" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" fill="#a5b4fc" text-anchor="middle" letter-spacing="4">EXCLUSIVELY CREATED</text>
+                <text x="0" y="-30" font-family="system-ui, -apple-system, sans-serif" font-size="44" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-1">${productName.toUpperCase()}</text>
+                <text x="0" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="500" fill="#94a3b8" text-anchor="middle">
+                    ${productDescription ? (productDescription.length > 40 ? productDescription.substring(0, 37) + '...' : productDescription) : 'Best-in-class product experience.'}
+                </text>
+                <g transform="translate(0, 90)" cursor="pointer">
+                    <rect x="-150" y="-25" width="300" height="50" rx="25" fill="#a855f7" filter="url(#glow)" />
+                    <text x="0" y="6" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" fill="white" text-anchor="middle" letter-spacing="2">ORDER NOW</text>
+                </g>
+            </g>
+        </svg>
+        `;
+    }
+}
 
 export const createProject= async(req:Request ,res:Response)=>{
     let tempProjectId: string;
@@ -144,28 +296,14 @@ export const createProject= async(req:Request ,res:Response)=>{
 
             base64Image =`data:image/png;base64,${finalBuffer.toString('base64')}`
         } catch (apiError: any) {
-            console.warn("Gemini Image Generation failed. Falling back to high-quality mockup generation...", apiError.message);
+            console.warn("Gemini Image Generation failed. Falling back to dynamic ad creative combination...", apiError.message);
             
-            // Select a dynamic premium Unsplash UGC combination ad image based on search keywords
-            const keywords = (productName + " " + userPrompt).toLowerCase();
-            let styledMockupUrl = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80'; // Minimalist watch mockup by default
-            
-            if (keywords.includes('shoe') || keywords.includes('sneaker') || keywords.includes('footwear')) {
-                styledMockupUrl = 'https://images.unsplash.com/photo-1460353581641-37baddff0d21?w=800&q=80'; // Model showing premium sneakers
-            } else if (keywords.includes('perfume') || keywords.includes('scent') || keywords.includes('bottle')) {
-                styledMockupUrl = 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?w=800&q=80'; // Elegant model applying perfume
-            } else if (keywords.includes('shirt') || keywords.includes('clothing') || keywords.includes('tshirt') || keywords.includes('apparel')) {
-                styledMockupUrl = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80'; // Fashion model showing styled outfit
-            } else if (keywords.includes('cup') || keywords.includes('mug') || keywords.includes('coffee')) {
-                styledMockupUrl = 'https://images.unsplash.com/photo-1517256064527-09c53b2d0bc6?w=800&q=80'; // Person holding designer mug in hand
-            } else if (keywords.includes('cosmetics') || keywords.includes('cream') || keywords.includes('makeup') || keywords.includes('skincare')) {
-                styledMockupUrl = 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80'; // Model applying luxury skincare/makeup
-            } else if (keywords.includes('headphone') || keywords.includes('earphone') || keywords.includes('sound') || keywords.includes('music')) {
-                styledMockupUrl = 'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&q=80'; // Model wearing high-end headphones
-            }
+            // Generate a real creative ad banner dynamically combining their actual uploaded product and model images!
+            const productUrl = uploadImages[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80';
+            const modelUrl = uploadImages[1] || 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80';
 
-            const imageResponse = await axios.get(styledMockupUrl, { responseType: 'arraybuffer' });
-            base64Image = `data:image/jpeg;base64,${Buffer.from(imageResponse.data).toString('base64')}`;
+            const svgContent = generateAdSvg(aspectRatio, productName, productDescription, productUrl, modelUrl);
+            base64Image = `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`;
         }
 
         const uploadResult = await cloudinary.uploader.upload(base64Image,
