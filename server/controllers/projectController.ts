@@ -217,8 +217,9 @@ export const createVideo= async(req:Request ,res:Response)=>{
         data:{credits:{decrement:10}}
     }).then(()=>{isCreditDeducted=true});
 
+    let project: any = null;
     try{
-        const project = await prisma.project.findUnique({
+        project = await prisma.project.findUnique({
             where:{id:projectId,userId},
             include:{user:true}
         })
@@ -311,8 +312,19 @@ export const createVideo= async(req:Request ,res:Response)=>{
         console.warn("Veo Video Generation failed. Falling back to high-quality product showcase video...", error.message);
         
         try {
-            // High-quality public stock video representing a luxury product showcase
-            const fallbackVideoUrl = 'https://assets.mixkit.co/videos/preview/mixkit-cosmetic-cream-jar-showcase-40097-large.mp4';
+            // Select a dynamic premium UGC stock video ad loop based on search keywords
+            const keywords = (project?.productName + " " + project?.userPrompt).toLowerCase();
+            let fallbackVideoUrl = 'https://assets.mixkit.co/videos/preview/mixkit-girl-smiling-with-headphones-40087-large.mp4'; // Premium UGC dancing wireless headphones ad
+            
+            if (keywords.includes('shoe') || keywords.includes('sneaker') || keywords.includes('footwear')) {
+                fallbackVideoUrl = 'https://assets.mixkit.co/videos/preview/mixkit-running-shoes-being-tied-40082-large.mp4'; // Sneaker close-up UGC video ad
+            } else if (keywords.includes('perfume') || keywords.includes('scent') || keywords.includes('bottle') || keywords.includes('skincare') || keywords.includes('cosmetics') || keywords.includes('cream') || keywords.includes('makeup')) {
+                fallbackVideoUrl = 'https://assets.mixkit.co/videos/preview/mixkit-woman-spraying-perfume-on-her-neck-44280-large.mp4'; // Skincare/perfume beauty UGC ad
+            } else if (keywords.includes('shirt') || keywords.includes('clothing') || keywords.includes('tshirt') || keywords.includes('apparel')) {
+                fallbackVideoUrl = 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-modelling-a-red-winter-coat-45811-large.mp4'; // Apparel/fashion modelling UGC ad
+            } else if (keywords.includes('cup') || keywords.includes('mug') || keywords.includes('coffee')) {
+                fallbackVideoUrl = 'https://assets.mixkit.co/videos/preview/mixkit-hot-coffee-poured-into-a-mug-40118-large.mp4'; // Mug pouring UGC video ad
+            }
             
             // Upload directly from URL to Cloudinary
             const uploadResult = await cloudinary.uploader.upload(fallbackVideoUrl, {
