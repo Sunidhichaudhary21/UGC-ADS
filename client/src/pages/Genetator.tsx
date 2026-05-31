@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Title from "../components/Title";
 import UploadZone from "../components/UploadZone";
-import { Loader2Icon, RectangleHorizontalIcon, RectangleVerticalIcon, Wand2Icon } from "lucide-react";
+import { ImageIcon, Loader2Icon, RectangleHorizontalIcon, RectangleVerticalIcon, VideoIcon, Wand2Icon } from "lucide-react";
 import { PrimaryButton } from "../components/Buttons";
 import { useAuth, useUser } from "@clerk/react";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ const Genetator = () => {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [aspectRatio, setAspectRatio] = useState("9:16");
+  const [generationType, setGenerationType] = useState<"photo" | "video" | "both">("photo");
   const [productImage, setProductImage] = useState<File | null>(null);
   const [modelImage, setModelImage] = useState<File | null>(null);
   const [userPrompt, setUserPrompt] = useState("");
@@ -47,6 +48,7 @@ const Genetator = () => {
       formData.append('productDescription',productDescription)
       formData.append('userPrompt',userPrompt)
       formData.append('aspectRatio',aspectRatio)
+      formData.append('generationType',generationType)
       formData.append('images',productImage)
       formData.append('images',modelImage)
 
@@ -69,10 +71,8 @@ const Genetator = () => {
     <div className="min-h-screen text-white p-6 md:p-12 mt-29">
       <form onSubmit={handleGenerate} className="max-w-4xl mx-auto mb-40 glass-panel p-8 md:p-12 rounded-[2rem]">
         <Title
-          heading="Create In-Context Image"
-          description="Upload
-            your model anf product images to generate stunning UGC
-            , short-form video and social media post"
+          heading="Create In-Context UGC Ad"
+          description="Upload your model and product images to generate stunning photo ads, short-form video loops, or both instantly!"
         />
 
         <div
@@ -147,6 +147,62 @@ const Genetator = () => {
             </div>
 
             <div className="mb-4 text-gray-300">
+              <label className="block text-sm mb-4">Ad Format Type</label>
+              <div className="flex gap-4 max-sm:flex-col sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => setGenerationType("photo")}
+                  className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl transition-all border border-white/10 cursor-pointer ${
+                    generationType === "photo"
+                      ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                      : "bg-white/5 text-white/60 hover:bg-white/10"
+                  }`}
+                >
+                  <ImageIcon className="size-6" />
+                  <div className="text-center">
+                    <p className="font-semibold text-sm">Photo Ad</p>
+                    <p className="text-xs opacity-60">5 credits</p>
+                  </div>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setGenerationType("video")}
+                  className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl transition-all border border-white/10 cursor-pointer ${
+                    generationType === "video"
+                      ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                      : "bg-white/5 text-white/60 hover:bg-white/10"
+                  }`}
+                >
+                  <VideoIcon className="size-6" />
+                  <div className="text-center">
+                    <p className="font-semibold text-sm">Video Ad</p>
+                    <p className="text-xs opacity-60">15 credits</p>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setGenerationType("both")}
+                  className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl transition-all border border-white/10 cursor-pointer ${
+                    generationType === "both"
+                      ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                      : "bg-white/5 text-white/60 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex gap-1">
+                    <ImageIcon className="size-5" />
+                    <VideoIcon className="size-5" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold text-sm">Both (Photo & Video)</p>
+                    <p className="text-xs opacity-60">15 credits</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-4 text-gray-300">
               <label className="block text-sm mb-4">Aspect Ratio</label>
               <div className="flex gap-3">
                 <RectangleVerticalIcon
@@ -188,7 +244,8 @@ const Genetator = () => {
             </>
             ):(
             <>
-            <Wand2Icon className="size"/>Generate Image
+            <Wand2Icon className="size-5 mr-2"/>
+            {generationType === 'photo' ? 'Generate Photo Ad' : generationType === 'video' ? 'Generate Video Ad' : 'Generate Photo & Video'}
             </>)}
           </PrimaryButton>
 

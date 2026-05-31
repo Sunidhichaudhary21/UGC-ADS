@@ -247,7 +247,7 @@ const togglePublish=async(projectId:string)=>{
           {!forCommunity && (
             <div className="mt-6 grid grid-cols-2 gap-3">
               <GhostButton className="text-xs justify-center w-full"
-              onClick={()=>{navigate(`/results/${gen.id}`);scrollTo(0,0)}}>
+              onClick={()=>{navigate(`/result/${gen.id}`);scrollTo(0,0)}}>
                 View Details
               </GhostButton>
               <PrimaryButton onClick={()=>togglePublish(gen.id)}

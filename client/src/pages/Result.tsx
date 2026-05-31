@@ -18,6 +18,7 @@ const Result = () => {
   const [project, setProjectData] = useState<Project>({} as Project);
   const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [activeTab, setActiveTab] = useState<"photo" | "video">("video");
 
   const fetchProjectData = async () => {
     try{
@@ -45,7 +46,7 @@ const handleGenerateVideo=async()=>{
     const {data} =await api.post('/api/project/video',{projectId},{
       headers:{Authorization :`Bearer ${token}`}
     })
-    setProjectData(prev=>({...prev,generatedVideo:data.videoUel,
+    setProjectData(prev=>({...prev,generatedVideo:data.videoUrl,
       isGenerating:false
     }))
     toast.success(data.message);
@@ -82,6 +83,14 @@ const handleGenerateVideo=async()=>{
 
   },[user,isGenerating])
 
+  useEffect(() => {
+    if (project.generatedVideo) {
+      setActiveTab("video");
+    } else if (project.generatedImage) {
+      setActiveTab("photo");
+    }
+  }, [project.generatedImage, project.generatedVideo]);
+
   return loading ? (
     <div className="h-screen w-full flex items-center justify-center">
       <Loader2Icon className="animate-spin text-blue-300 size-9" />
@@ -106,15 +115,48 @@ const handleGenerateVideo=async()=>{
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Result Display */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="glass-panel inline-block p-2 rounded-2xl">
+            {project?.generatedImage && project?.generatedVideo && (
+              <div className="flex gap-2 bg-white/5 p-1 rounded-xl w-fit border border-white/10 shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("photo")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    activeTab === "photo"
+                      ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                      : "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="size-4" />
+                    <span>Photo Ad</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("video")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    activeTab === "video"
+                      ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                      : "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <VideoIcon className="size-4" />
+                    <span>Video Ad</span>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            <div className="glass-panel inline-block p-2 rounded-2xl w-full">
               <div
                 className={`${
                   project?.aspectRatio === "9:16"
                     ? "aspect-9/16"
                     : "aspect-video"
-                } sm;max-h-200 rounded-xl bg-gray-900 overflow-hidden relative`}
+                } sm:max-h-200 rounded-xl bg-gray-900 overflow-hidden relative`}
               >
-                {project?.generatedVideo ? (
+                {activeTab === "video" && project?.generatedVideo ? (
                   <video
                     src={project.generatedVideo}
                     controls
