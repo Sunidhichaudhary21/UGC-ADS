@@ -1,10 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import "dotenv/config";
-
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_CLOUD_API_KEY,
 });
-
 async function main() {
     try {
         console.log("Fetching response...");
@@ -16,9 +14,9 @@ async function main() {
                 console.log(`- ${m.name} (${m.displayName}) - Actions: ${JSON.stringify(m.supportedActions)}`);
             }
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error:", error);
     }
 }
-
 main();

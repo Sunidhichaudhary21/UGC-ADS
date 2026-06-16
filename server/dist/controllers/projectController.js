@@ -1,31 +1,25 @@
-import {Request, Response} from 'express'
-import *as Sentry from "@sentry/node"
+import * as Sentry from "@sentry/node";
 import { prisma } from '../configs/prisma.js';
 import { getOrCreateUser } from '../helpers/user.js';
-import {v2 as cloudinary} from 'cloudinary';
-import {GenerateContentConfig, HarmBlockThreshold,HarmCategory} from '@google/genai'
+import { v2 as cloudinary } from 'cloudinary';
+import { HarmBlockThreshold, HarmCategory } from '@google/genai';
 import fs from 'fs';
 import path from 'path';
 import ai from '../configs/ai.js';
 import axios from 'axios';
-import { error } from 'console';
 import { getAuth } from '@clerk/express';
-const loadImage =(path:string ,mimeType:string)=>{
+const loadImage = (path, mimeType) => {
     return {
-        inlineData:{
-            data:fs.readFileSync(path).toString('base64'),
+        inlineData: {
+            data: fs.readFileSync(path).toString('base64'),
             mimeType
-
         }
-    }
-
-}
-
-function generateAdSvg(aspectRatio: string, productName: string, productDescription: string, productUrl: string, modelUrl: string): string {
+    };
+};
+function generateAdSvg(aspectRatio, productName, productDescription, productUrl, modelUrl) {
     const isVertical = aspectRatio === "9:16";
     const width = isVertical ? 1080 : 1920;
     const height = isVertical ? 1920 : 1080;
-
     if (isVertical) {
         return `
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
@@ -99,7 +93,8 @@ function generateAdSvg(aspectRatio: string, productName: string, productDescript
             </g>
         </svg>
         `;
-    } else {
+    }
+    else {
         return `
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
             <defs>
@@ -173,8 +168,7 @@ function generateAdSvg(aspectRatio: string, productName: string, productDescript
         `;
     }
 }
-
-async function generateVideoHelper(projectId: string, userId: string): Promise<string> {
+async function generateVideoHelper(projectId, userId) {
     console.log(`[Video Gen] Starting video generation helper for project: ${projectId}, user: ${userId}`);
     const project = await prisma.project.findUnique({
         where: { id: projectId, userId }
@@ -183,23 +177,19 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
         console.error(`[Video Gen] Project not found for id: ${projectId}`);
         throw new Error('Project not found');
     }
-
     const prompt = `Create a premium, high-end lifestyle UGC video ad loop showcasing the product "${project.productName}". The person in the image should naturally interact with the product—holding it in their hand, carrying it, wearing it, or demonstrating its use with organic, smooth movements. The animation must show realistic physics, natural facial expressions (like smiling or showcasing the product proudly), and soft camera motion (such as a subtle pan, slow-motion slide, or gentle zoom-in). Ensure perfect temporal consistency, high visual realism, and a loopable feel suitable for an engaging social media advertisement.`;
     const model = 'veo-3.1-generate-preview';
-
     if (!project.generatedImage) {
         console.error(`[Video Gen] Generated image missing for project: ${projectId}`);
         throw new Error('Generated image not found');
     }
-
     let videoUrl = '';
     try {
         console.log(`[Video Gen] Downloading generated image for video reference: ${project.generatedImage}`);
         const image = await axios.get(project.generatedImage, { responseType: 'arraybuffer' });
-        const imageBytes: any = Buffer.from(image.data);
-
+        const imageBytes = Buffer.from(image.data);
         console.log(`[Video Gen] Initiating generateVideos call via Gemini (Veo model: ${model})...`);
-        let operation: any = await ai.models.generateVideos({
+        let operation = await ai.models.generateVideos({
             model,
             prompt,
             image: {
@@ -212,7 +202,6 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
                 resolution: '720p',
             }
         });
-
         while (!operation.done) {
             console.log('[Video Gen] Waiting for video generation to complete...');
             await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -220,43 +209,38 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
                 operation: operation,
             });
         }
-
         const filename = `${userId}-${Date.now()}.mp4`;
         const filePath = path.join('videos', filename);
         fs.mkdirSync('videos', { recursive: true });
-
         if (!operation.response.generatedVideo) {
             throw new Error(operation.response.raiMediaFilteredReasons?.[0] || 'Veo response did not contain video');
         }
-
         console.log(`[Video Gen] Video generated. Downloading to: ${filePath}`);
         await ai.files.download({
             file: operation.response.generatedVideos[0].video,
             downloadPath: filePath
         });
-
         console.log(`[Video Gen] Uploading generated video to Cloudinary...`);
         const uploadResult = await cloudinary.uploader.upload(filePath, {
             resource_type: 'video'
         });
-
         videoUrl = uploadResult.secure_url;
         console.log(`[Video Gen] Uploaded successfully: ${videoUrl}`);
         fs.unlinkSync(filePath);
-    } catch (error: any) {
+    }
+    catch (error) {
         console.warn(`[Video Gen] Veo Video Generation failed (${error.message}). Falling back to generic template video...`);
-        
         const keywords = (project.productName + " " + project.userPrompt + " " + project.productDescription).toLowerCase();
         let fallbackVideoUrl = 'https://github.com/intel-iot-devkit/sample-videos/raw/master/face-demographics-walking-and-pause.mp4';
-        
         if (keywords.includes('headphone') || keywords.includes('earphone') || keywords.includes('audio') || keywords.includes('music') || keywords.includes('sound')) {
             fallbackVideoUrl = 'https://github.com/intel-iot-devkit/sample-videos/raw/master/head-pose-face-detection-female.mp4';
-        } else if (keywords.includes('shoe') || keywords.includes('sneaker') || keywords.includes('footwear') || keywords.includes('shirt') || keywords.includes('clothing') || keywords.includes('tshirt') || keywords.includes('apparel') || keywords.includes('fashion') || keywords.includes('pose') || keywords.includes('model') || keywords.includes('wear') || keywords.includes('dress')) {
+        }
+        else if (keywords.includes('shoe') || keywords.includes('sneaker') || keywords.includes('footwear') || keywords.includes('shirt') || keywords.includes('clothing') || keywords.includes('tshirt') || keywords.includes('apparel') || keywords.includes('fashion') || keywords.includes('pose') || keywords.includes('model') || keywords.includes('wear') || keywords.includes('dress')) {
             fallbackVideoUrl = 'https://github.com/intel-iot-devkit/sample-videos/raw/master/face-demographics-walking-and-pause.mp4';
-        } else if (keywords.includes('perfume') || keywords.includes('scent') || keywords.includes('bottle') || keywords.includes('skincare') || keywords.includes('cosmetics') || keywords.includes('cream') || keywords.includes('makeup') || keywords.includes('dropper') || keywords.includes('serum') || keywords.includes('shampoo')) {
+        }
+        else if (keywords.includes('perfume') || keywords.includes('scent') || keywords.includes('bottle') || keywords.includes('skincare') || keywords.includes('cosmetics') || keywords.includes('cream') || keywords.includes('makeup') || keywords.includes('dropper') || keywords.includes('serum') || keywords.includes('shampoo')) {
             fallbackVideoUrl = 'https://github.com/intel-iot-devkit/sample-videos/raw/master/bottle-detection.mp4';
         }
-        
         console.log(`[Video Gen] Uploading fallback video URL to Cloudinary: ${fallbackVideoUrl}`);
         const uploadResult = await cloudinary.uploader.upload(fallbackVideoUrl, {
             resource_type: 'video'
@@ -264,7 +248,6 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
         videoUrl = uploadResult.secure_url;
         console.log(`[Video Gen] Fallback video uploaded successfully: ${videoUrl}`);
     }
-
     console.log(`[Video Gen] Updating database record with generated video url...`);
     await prisma.project.update({
         where: { id: projectId },
@@ -273,41 +256,32 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
             isGenerating: false
         }
     });
-
     console.log(`[Video Gen] Video helper successfully completed for project: ${projectId}`);
     return videoUrl;
 }
-
-export const createProject = async (req: Request, res: Response) => {
-    let tempProjectId: string;
+export const createProject = async (req, res) => {
+    let tempProjectId;
     const { userId } = getAuth(req);
-    if (!userId) { 
+    if (!userId) {
         console.error("[Create Project] Unauthorized request");
-        return res.status(401).json({ message: 'Unauthorized' }) 
+        return res.status(401).json({ message: 'Unauthorized' });
     }
     let isCreditDeducted = false;
-
     let { name, aspectRatio = '9:16', userPrompt = '', productName = '', productDescription = '', targetLength = 5, generationType = 'both' } = req.body;
     if (!generationType) {
         generationType = 'both';
     }
-
     console.log(`[Create Project] User ${userId} initiated campaign creation. Body:`, { name, aspectRatio, productName, productDescription, generationType });
-
-    const images: any = req.files;
-
+    const images = req.files;
     if (!images || images.length < 2) {
         console.error("[Create Project] Insufficient images uploaded. Expected at least 2.");
-        return res.status(400).json({ message: 'please upload atleast 2 images' })
+        return res.status(400).json({ message: 'please upload atleast 2 images' });
     }
-
     const img1base64 = loadImage(images[0].path, images[0].mimetype);
     const img2base64 = loadImage(images[1].path, images[1].mimetype);
-
     // Auto-detect product name and description if not provided
     let detectedProductName = productName || '';
     let detectedProductDescription = productDescription || '';
-
     if (!detectedProductName) {
         console.log("[Create Project] Product name missing. Auto-detecting details from image via Gemini 2.5 Flash...");
         try {
@@ -325,52 +299,47 @@ export const createProject = async (req: Request, res: Response) => {
             if (text) {
                 console.log(`[Create Project] Gemini response text: ${text}`);
                 const parsed = JSON.parse(text);
-                if (parsed.productName) detectedProductName = parsed.productName;
-                if (parsed.productDescription) detectedProductDescription = parsed.productDescription;
+                if (parsed.productName)
+                    detectedProductName = parsed.productName;
+                if (parsed.productDescription)
+                    detectedProductDescription = parsed.productDescription;
             }
-        } catch (err: any) {
+        }
+        catch (err) {
             console.error("[Create Project] Error auto-detecting product info:", err.message || err);
         }
     }
-
     if (!detectedProductName) {
         detectedProductName = "Premium Product";
     }
     if (!detectedProductDescription) {
         detectedProductDescription = "High-quality lifestyle product.";
     }
-
     console.log(`[Create Project] Final product details: Name = "${detectedProductName}", Description = "${detectedProductDescription}"`);
-
     const finalProjectName = name || `UGC Ad - ${detectedProductName}`;
-
     const user = await getOrCreateUser(userId);
     const requiredCredits = (generationType === 'video' || generationType === 'both') ? 15 : 5;
-
     console.log(`[Create Project] Checking credits for user ${userId}. Available: ${user.credits}, Required: ${requiredCredits}`);
     if (user.credits < requiredCredits) {
         console.error(`[Create Project] Insufficient credits for user ${userId}. Available: ${user.credits}`);
-        return res.status(401).json({ message: 'Insufficient credits' })
-    } else {
+        return res.status(401).json({ message: 'Insufficient credits' });
+    }
+    else {
         await prisma.user.update({
             where: { id: userId },
             data: { credits: { decrement: requiredCredits } }
-        }).then(() => { 
+        }).then(() => {
             isCreditDeducted = true;
             console.log(`[Create Project] Deducted ${requiredCredits} credits. User now has ${user.credits - requiredCredits} credits.`);
         });
     }
-
     try {
         console.log(`[Create Project] Uploading uploaded images to Cloudinary...`);
-        let uploadImages = await Promise.all(
-            images.map(async (item: any) => {
-                let result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
-                return result.secure_url;
-            })
-        );
+        let uploadImages = await Promise.all(images.map(async (item) => {
+            let result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
+            return result.secure_url;
+        }));
         console.log(`[Create Project] Cloudinary upload successful:`, uploadImages);
-
         console.log(`[Create Project] Saving campaign project to database...`);
         const project = await prisma.project.create({
             data: {
@@ -387,16 +356,14 @@ export const createProject = async (req: Request, res: Response) => {
         });
         tempProjectId = project.id;
         console.log(`[Create Project] Project saved successfully with ID: ${project.id}`);
-
         // Respond with project ID immediately, allowing the client to transition and poll
         res.json({ projectId: project.id, message: 'Generation process initiated successfully' });
-
         // Run AI generations asynchronously in the background to prevent request timeout
         (async () => {
             console.log(`[Background Worker] Starting generation workflow for project: ${project.id}`);
             try {
                 const model = 'gemini-3-pro-image-preview';
-                const generationConfig: GenerateContentConfig = {
+                const generationConfig = {
                     maxOutputTokens: 32768,
                     temperature: 1,
                     topP: 0.95,
@@ -412,7 +379,6 @@ export const createProject = async (req: Request, res: Response) => {
                         { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.OFF },
                     ]
                 };
-
                 const generationPrompt = {
                     text: `You are given two images:
 1. Product Image: This image contains the specific product named "${detectedProductName}".
@@ -437,11 +403,10 @@ Product Description: ${detectedProductDescription}
 
 Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercial aesthetic."}`
                 };
-
-                let base64Image: string;
+                let base64Image;
                 try {
                     console.log(`[Background Worker] Calling Gemini generateContent for image gen (${model})...`);
-                    const response: any = await ai.models.generateContent({
+                    const response = await ai.models.generateContent({
                         model,
                         contents: [
                             { text: "Product Image:" },
@@ -452,38 +417,32 @@ Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercia
                         ],
                         config: generationConfig,
                     });
-
                     if (!response?.candidates?.[0]?.content?.parts) {
                         throw new Error('Unexpected response structure');
                     }
-
                     const parts = response.candidates[0].content.parts;
-                    let finalBuffer: Buffer | null = null;
-
+                    let finalBuffer = null;
                     for (const part of parts) {
                         if (part.inlineData) {
                             finalBuffer = Buffer.from(part.inlineData.data, 'base64');
                         }
                     }
-
                     if (!finalBuffer) {
                         throw new Error("Failed to generate image bytes");
                     }
-
                     base64Image = `data:image/png;base64,${finalBuffer.toString('base64')}`;
                     console.log("[Background Worker] Gemini image generation succeeded.");
-                } catch (apiError: any) {
+                }
+                catch (apiError) {
                     console.warn(`[Background Worker] Gemini Image Generation failed (${apiError.message}). Falling back to SVG generator...`);
                     const productUrl = uploadImages[0];
                     const modelUrl = uploadImages[1];
                     const svgContent = generateAdSvg(aspectRatio, detectedProductName, detectedProductDescription, productUrl, modelUrl);
                     base64Image = `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`;
                 }
-
                 console.log("[Background Worker] Uploading generated creative image to Cloudinary...");
                 const uploadResult = await cloudinary.uploader.upload(base64Image, { resource_type: 'image' });
                 console.log(`[Background Worker] Creative image uploaded successfully: ${uploadResult.secure_url}`);
-
                 if (generationType === 'video' || generationType === 'both') {
                     // Update project with the generated image, keeping isGenerating: true
                     console.log("[Background Worker] Updating project with generated image, proceeding to video generation...");
@@ -493,10 +452,10 @@ Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercia
                             generatedImage: uploadResult.secure_url
                         }
                     });
-
                     // Trigger video generation background worker
                     await generateVideoHelper(project.id, userId);
-                } else {
+                }
+                else {
                     // Single photo ad type completed
                     console.log("[Background Worker] Ad generation complete (photo ad type). Updating project in DB...");
                     await prisma.project.update({
@@ -507,37 +466,39 @@ Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercia
                         }
                     });
                 }
-            } catch (bgError: any) {
+            }
+            catch (bgError) {
                 console.error("[Background Worker] Fatal error in generation workflow:", bgError.message || bgError);
                 await prisma.project.update({
                     where: { id: project.id },
                     data: { isGenerating: false, error: bgError.message }
                 });
-                
                 // Refund credits on background failure
                 console.log(`[Background Worker] Refunding ${requiredCredits} credits to user ${userId} due to failure.`);
                 await prisma.user.update({
                     where: { id: userId },
                     data: { credits: { increment: requiredCredits } }
                 });
-            } finally {
+            }
+            finally {
                 // Delete temporary multer uploaded files from disk
                 console.log("[Background Worker] Cleaning up temporary files...");
-                images.forEach((file: any) => {
+                images.forEach((file) => {
                     try {
                         if (fs.existsSync(file.path)) {
                             fs.unlinkSync(file.path);
                         }
-                    } catch (err: any) {
+                    }
+                    catch (err) {
                         console.error("Failed to clean up temp file:", err.message);
                     }
                 });
             }
         })();
-
-    } catch (error: any) {
+    }
+    catch (error) {
         console.error("[Create Project] Outer handler caught fatal error:", error.message || error);
-        if (tempProjectId!) {
+        if (tempProjectId) {
             await prisma.project.update({
                 where: { id: tempProjectId },
                 data: { isGenerating: false, error: error.message }
@@ -550,24 +511,23 @@ Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercia
                 data: { credits: { increment: requiredCredits } }
             });
         }
-        images.forEach((file: any) => {
+        images.forEach((file) => {
             try {
                 if (fs.existsSync(file.path)) {
                     fs.unlinkSync(file.path);
                 }
-            } catch (err) {}
+            }
+            catch (err) { }
         });
-
         Sentry.captureException(error);
         res.status(500).json({ message: error.message });
     }
-}
-
-export const createVideo = async (req: Request, res: Response) => {
+};
+export const createVideo = async (req, res) => {
     const { userId } = getAuth(req);
-    if (!userId) { 
+    if (!userId) {
         console.error("[Create Video] Unauthorized request");
-        return res.status(401).json({ message: 'Unauthorized' }) 
+        return res.status(401).json({ message: 'Unauthorized' });
     }
     const { projectId } = req.body;
     console.log(`[Create Video] User ${userId} requested video generation for project: ${projectId}`);
@@ -577,20 +537,17 @@ export const createVideo = async (req: Request, res: Response) => {
         console.error(`[Create Video] Insufficient credits for user ${userId}. Available: ${user.credits}`);
         return res.status(401).json({ message: 'Insufficient credits' });
     }
-    
     await prisma.user.update({
         where: { id: userId },
         data: { credits: { decrement: 10 } }
-    }).then(() => { 
+    }).then(() => {
         isCreditDeducted = true;
         console.log(`[Create Video] Deducted 10 credits. User now has ${user.credits - 10} credits.`);
     });
-
     try {
         const project = await prisma.project.findUnique({
             where: { id: projectId, userId }
         });
-        
         if (!project || project.isGenerating) {
             console.error(`[Create Video] Project ${projectId} is generating or not found`);
             if (isCreditDeducted) {
@@ -601,7 +558,6 @@ export const createVideo = async (req: Request, res: Response) => {
             }
             return res.status(404).json({ message: 'Generation in progress or project not found' });
         }
-
         if (project.generatedVideo) {
             console.error(`[Create Video] Video already generated for project ${projectId}`);
             if (isCreditDeducted) {
@@ -612,16 +568,15 @@ export const createVideo = async (req: Request, res: Response) => {
             }
             return res.status(400).json({ message: 'Video already generated' });
         }
-
         await prisma.project.update({
             where: { id: projectId },
             data: { isGenerating: true }
         });
-
         console.log(`[Create Video] Invoking video generation helper for project: ${projectId}`);
         const videoUrl = await generateVideoHelper(projectId, userId);
         res.json({ message: 'Video generation completed', videoUrl });
-    } catch (error: any) {
+    }
+    catch (error) {
         console.error(`[Create Video] Failed to generate video for project ${projectId}:`, error.message || error);
         await prisma.project.update({
             where: { id: projectId },
@@ -637,48 +592,39 @@ export const createVideo = async (req: Request, res: Response) => {
         Sentry.captureException(error);
         res.status(500).json({ message: error.message });
     }
-}
-
-
-export const getAllPublishedProjects= async(req:Request ,res:Response)=>{
-    try{
-        const projects =await prisma.project.findMany({
-            where:{isPublished:true}
-        })
-        res.json({projects})
-
-
-    }catch(error:any){
-        Sentry.captureException(error);
-        res.status(500).json({message:error.message});
-
-
+};
+export const getAllPublishedProjects = async (req, res) => {
+    try {
+        const projects = await prisma.project.findMany({
+            where: { isPublished: true }
+        });
+        res.json({ projects });
     }
-}
-
-
-export const deleteProject= async(req:Request ,res:Response)=>{
-    try{
-        const {userId} = getAuth(req);
-        if(!userId) {return res.status(401).json({message:'Unauthorized'})}
-        const {projectId} =req.params;
-        const project =await prisma.project.findUnique({
-            where: {id: projectId as string,userId}
-        })
-
-        if(!project){
-            return res.status(404).json({message:'Project not found'})
+    catch (error) {
+        Sentry.captureException(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+export const deleteProject = async (req, res) => {
+    try {
+        const { userId } = getAuth(req);
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const { projectId } = req.params;
+        const project = await prisma.project.findUnique({
+            where: { id: projectId, userId }
+        });
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
         }
         await prisma.project.delete({
-            where:{id: projectId as string}
-        })
-        res.json({message: 'Project deleted'});
-
-
-    }catch(error:any){
-        Sentry.captureException(error);
-        res.status(500).json({message:error.message});
-
-
+            where: { id: projectId }
+        });
+        res.json({ message: 'Project deleted' });
     }
-}
+    catch (error) {
+        Sentry.captureException(error);
+        res.status(500).json({ message: error.message });
+    }
+};
