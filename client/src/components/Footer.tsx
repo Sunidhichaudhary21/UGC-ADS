@@ -15,7 +15,7 @@ export default function Footer() {
                     <div>
                         <img src='{assets.logo}' alt="logo" className="h-8" />
                         <p className="max-w-[410px] mt-6 text-sm leading-relaxed">
-                            Create viral UGC in seconds.Upload product images and a model images -Our 
+                            Create viral UGC in seconds.Upload product images and a model images -Our
                             AI instantly produces professional lifestyle and short-form videos.
                         </p>
                     </div>

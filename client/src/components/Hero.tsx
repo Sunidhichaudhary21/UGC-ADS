@@ -61,7 +61,7 @@ export default function Hero() {
                                 viewport={{ once: true }}
                                 transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1, delay: 0.1 }}
                             >
-                                 Create your UGC<br />
+                                Create your UGC<br />
                                 <span className="text-gradient">
                                     in seconds
                                 </span>
@@ -73,9 +73,9 @@ export default function Hero() {
                                 viewport={{ once: true }}
                                 transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1, delay: 0.2 }}
                             >
-                                Upload product images and a model images -our AI instantly produces lifestyle image 
+                                Upload product images and a model images -our AI instantly produces lifestyle image
                                 and short-form videos optimized for commercials and Reels.
-                                
+
                             </motion.p>
 
                             <motion.div className="flex flex-col sm:flex-row items-center gap-4 mb-8"

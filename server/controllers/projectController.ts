@@ -1,19 +1,19 @@
-import {Request, Response} from 'express'
+import { Request, Response } from 'express'
 import *as Sentry from "@sentry/node"
 import { prisma } from '../configs/prisma.js';
 import { getOrCreateUser } from '../helpers/user.js';
-import {v2 as cloudinary} from 'cloudinary';
-import {GenerateContentConfig, HarmBlockThreshold,HarmCategory} from '@google/genai'
+import { v2 as cloudinary } from 'cloudinary';
+import { GenerateContentConfig, HarmBlockThreshold, HarmCategory } from '@google/genai'
 import fs from 'fs';
 import path from 'path';
 import ai from '../configs/ai.js';
 import axios from 'axios';
 import { error } from 'console';
 import { getAuth } from '@clerk/express';
-const loadImage =(path:string ,mimeType:string)=>{
+const loadImage = (path: string, mimeType: string) => {
     return {
-        inlineData:{
-            data:fs.readFileSync(path).toString('base64'),
+        inlineData: {
+            data: fs.readFileSync(path).toString('base64'),
             mimeType
 
         }
@@ -245,10 +245,10 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
         fs.unlinkSync(filePath);
     } catch (error: any) {
         console.warn(`[Video Gen] Veo Video Generation failed (${error.message}). Falling back to generic template video...`);
-        
+
         const keywords = (project.productName + " " + project.userPrompt + " " + project.productDescription).toLowerCase();
         let fallbackVideoUrl = 'https://github.com/intel-iot-devkit/sample-videos/raw/master/face-demographics-walking-and-pause.mp4';
-        
+
         if (keywords.includes('headphone') || keywords.includes('earphone') || keywords.includes('audio') || keywords.includes('music') || keywords.includes('sound')) {
             fallbackVideoUrl = 'https://github.com/intel-iot-devkit/sample-videos/raw/master/head-pose-face-detection-female.mp4';
         } else if (keywords.includes('shoe') || keywords.includes('sneaker') || keywords.includes('footwear') || keywords.includes('shirt') || keywords.includes('clothing') || keywords.includes('tshirt') || keywords.includes('apparel') || keywords.includes('fashion') || keywords.includes('pose') || keywords.includes('model') || keywords.includes('wear') || keywords.includes('dress')) {
@@ -256,7 +256,7 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
         } else if (keywords.includes('perfume') || keywords.includes('scent') || keywords.includes('bottle') || keywords.includes('skincare') || keywords.includes('cosmetics') || keywords.includes('cream') || keywords.includes('makeup') || keywords.includes('dropper') || keywords.includes('serum') || keywords.includes('shampoo')) {
             fallbackVideoUrl = 'https://github.com/intel-iot-devkit/sample-videos/raw/master/bottle-detection.mp4';
         }
-        
+
         console.log(`[Video Gen] Uploading fallback video URL to Cloudinary: ${fallbackVideoUrl}`);
         const uploadResult = await cloudinary.uploader.upload(fallbackVideoUrl, {
             resource_type: 'video'
@@ -281,9 +281,9 @@ async function generateVideoHelper(projectId: string, userId: string): Promise<s
 export const createProject = async (req: Request, res: Response) => {
     let tempProjectId: string;
     const { userId } = getAuth(req);
-    if (!userId) { 
+    if (!userId) {
         console.error("[Create Project] Unauthorized request");
-        return res.status(401).json({ message: 'Unauthorized' }) 
+        return res.status(401).json({ message: 'Unauthorized' })
     }
     let isCreditDeducted = false;
 
@@ -355,7 +355,7 @@ export const createProject = async (req: Request, res: Response) => {
         await prisma.user.update({
             where: { id: userId },
             data: { credits: { decrement: requiredCredits } }
-        }).then(() => { 
+        }).then(() => {
             isCreditDeducted = true;
             console.log(`[Create Project] Deducted ${requiredCredits} credits. User now has ${user.credits - requiredCredits} credits.`);
         });
@@ -513,7 +513,7 @@ Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercia
                     where: { id: project.id },
                     data: { isGenerating: false, error: bgError.message }
                 });
-                
+
                 // Refund credits on background failure
                 console.log(`[Background Worker] Refunding ${requiredCredits} credits to user ${userId} due to failure.`);
                 await prisma.user.update({
@@ -555,7 +555,7 @@ Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercia
                 if (fs.existsSync(file.path)) {
                     fs.unlinkSync(file.path);
                 }
-            } catch (err) {}
+            } catch (err) { }
         });
 
         Sentry.captureException(error);
@@ -565,9 +565,9 @@ Additional user guidelines: ${userPrompt || "Focus on a clean, premium commercia
 
 export const createVideo = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
-    if (!userId) { 
+    if (!userId) {
         console.error("[Create Video] Unauthorized request");
-        return res.status(401).json({ message: 'Unauthorized' }) 
+        return res.status(401).json({ message: 'Unauthorized' })
     }
     const { projectId } = req.body;
     console.log(`[Create Video] User ${userId} requested video generation for project: ${projectId}`);
@@ -577,11 +577,11 @@ export const createVideo = async (req: Request, res: Response) => {
         console.error(`[Create Video] Insufficient credits for user ${userId}. Available: ${user.credits}`);
         return res.status(401).json({ message: 'Insufficient credits' });
     }
-    
+
     await prisma.user.update({
         where: { id: userId },
         data: { credits: { decrement: 10 } }
-    }).then(() => { 
+    }).then(() => {
         isCreditDeducted = true;
         console.log(`[Create Video] Deducted 10 credits. User now has ${user.credits - 10} credits.`);
     });
@@ -590,7 +590,7 @@ export const createVideo = async (req: Request, res: Response) => {
         const project = await prisma.project.findUnique({
             where: { id: projectId, userId }
         });
-        
+
         if (!project || project.isGenerating) {
             console.error(`[Create Video] Project ${projectId} is generating or not found`);
             if (isCreditDeducted) {
@@ -640,44 +640,44 @@ export const createVideo = async (req: Request, res: Response) => {
 }
 
 
-export const getAllPublishedProjects= async(req:Request ,res:Response)=>{
-    try{
-        const projects =await prisma.project.findMany({
-            where:{isPublished:true}
+export const getAllPublishedProjects = async (req: Request, res: Response) => {
+    try {
+        const projects = await prisma.project.findMany({
+            where: { isPublished: true }
         })
-        res.json({projects})
+        res.json({ projects })
 
 
-    }catch(error:any){
+    } catch (error: any) {
         Sentry.captureException(error);
-        res.status(500).json({message:error.message});
+        res.status(500).json({ message: error.message });
 
 
     }
 }
 
 
-export const deleteProject= async(req:Request ,res:Response)=>{
-    try{
-        const {userId} = getAuth(req);
-        if(!userId) {return res.status(401).json({message:'Unauthorized'})}
-        const {projectId} =req.params;
-        const project =await prisma.project.findUnique({
-            where: {id: projectId as string,userId}
+export const deleteProject = async (req: Request, res: Response) => {
+    try {
+        const { userId } = getAuth(req);
+        if (!userId) { return res.status(401).json({ message: 'Unauthorized' }) }
+        const { projectId } = req.params;
+        const project = await prisma.project.findUnique({
+            where: { id: projectId as string, userId }
         })
 
-        if(!project){
-            return res.status(404).json({message:'Project not found'})
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' })
         }
         await prisma.project.delete({
-            where:{id: projectId as string}
+            where: { id: projectId as string }
         })
-        res.json({message: 'Project deleted'});
+        res.json({ message: 'Project deleted' });
 
 
-    }catch(error:any){
+    } catch (error: any) {
         Sentry.captureException(error);
-        res.status(500).json({message:error.message});
+        res.status(500).json({ message: error.message });
 
 
     }
